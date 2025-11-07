@@ -224,9 +224,8 @@ This project is open source and available under the [MIT License](LICENSE).
 ## 👨‍💻 Author
 
 **Your Name**
-- DEV: [@your-dev-username](https://dev.to/your-username)
-- GitHub: [@your-github-username](https://github.com/your-username)
-- Twitter: [@your-twitter](https://twitter.com/your-username)
+- DEV: [@joshuacymongomez](https://dev.to/joshuacymongomez)
+- GitHub: [@coozgan](https://github.com/coozgan)
 
 ---
 
