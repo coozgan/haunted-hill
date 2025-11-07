@@ -110,9 +110,7 @@ Fully responsive across all devices:
 ```
 front-end-challenge/
 ├── index.html          # Main HTML file with all code
-├── README.md           # This file
-├── DEV_POST.md         # DEV Community post content
-└── screenshots/        # Screenshots for documentation
+└── README.md           # This file
 ```
 
 ## 🎃 Features Breakdown
