@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Haunted Hill - A Halloween Adventure</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Creepster&family=Eater&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+  .font-creepster {
+    font-family: 'Creepster', cursive;
+  }
+  
+  .font-eater {
+    font-family: 'Eater', cursive;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) translateX(0px); }
+    25% { transform: translateY(-20px) translateX(10px); }
+    50% { transform: translateY(-10px) translateX(-10px); }
+    75% { transform: translateY(-15px) translateX(5px); }
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(244, 140, 37, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(244, 140, 37, 0.6); }
+  }
+  
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+    75% { opacity: 0.9; }
+  }
+  
+  @keyframes drift {
+    0% { transform: translateX(0) translateY(0) rotate(0deg); }
+    33% { transform: translateX(30px) translateY(-20px) rotate(5deg); }
+    66% { transform: translateX(-20px) translateY(-10px) rotate(-3deg); }
+    100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  
+  .animate-flicker {
+    animation: flicker 3s ease-in-out infinite;
+  }
+  
+  .animate-drift {
+    animation: drift 8s ease-in-out infinite;
+  }
+  
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+  }
+  
+  .fog {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+    opacity: 0.3;
+    animation: drift 10s ease-in-out infinite;
+  }
+  
+  .particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(244, 140, 37, 0.8) 0%, rgba(244, 140, 37, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+  
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .parallax {
+    transition: transform 0.1s ease-out;
+  }
+  
+  .hero-text-shadow {
+    text-shadow: 2px 2px 8px rgba(244, 140, 37, 0.7),
+                 0 0 20px rgba(244, 140, 37, 0.5),
+                 0 0 40px rgba(244, 140, 37, 0.3);
+  }
+  
+  .mobile-menu {
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .mobile-menu.open {
+    transform: translateX(0);
+  }
+  
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(244, 140, 37, 0.3);
+  }
+  
+  .btn-spooky {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-spooky::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+  
+  .btn-spooky:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#f48c25",
+          "background-light": "#f8f7f5",
+          "background-dark": "#221910",
+        },
+        fontFamily: {
+          "display": ["Space Grotesk", "sans-serif"]
+        },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display overflow-x-hidden">
+<div class="relative min-h-screen w-full flex-col group/design-root">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-primary/20 bg-background-dark/90 px-4 py-3 text-white backdrop-blur-md sm:px-10 animate-fade-in-up">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary animate-flicker">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"></path>
+<path clip-rule="evenodd" d="M10.4485 13.8519C10.4749 13.9271 10.6203 14.246 11.379 14.7361C12.298 15.3298 13.7492 15.9145 15.6717 16.3735C18.0007 16.9296 20.8712 17.2655 24 17.2655C27.1288 17.2655 29.9993 16.9296 32.3283 16.3735C34.2508 15.9145 35.702 15.3298 36.621 14.7361C37.3796 14.246 37.5251 13.9271 37.5515 13.8519C37.5287 13.7876 37.4333 13.5973 37.0635 13.2931C36.5266 12.8516 35.6288 12.3647 34.343 11.9175C31.79 11.0295 28.1333 10.4437 24 10.4437C19.8667 10.4437 16.2099 11.0295 13.657 11.9175C12.3712 12.3647 11.4734 12.8516 10.9365 13.2931C10.5667 13.5973 10.4713 13.7876 10.4485 13.8519ZM37.5563 18.7877C36.3176 19.3925 34.8502 19.8839 33.2571 20.2642C30.5836 20.9025 27.3973 21.2655 24 21.2655C20.6027 21.2655 17.4164 20.9025 14.7429 20.2642C13.1498 19.8839 11.6824 19.3925 10.4436 18.7877V34.1275C10.4515 34.1545 10.5427 34.4867 11.379 35.027C12.298 35.6207 13.7492 36.2054 15.6717 36.6644C18.0007 37.2205 20.8712 37.5564 24 37.5564C27.1288 37.5564 29.9993 37.2205 32.3283 36.6644C34.2508 36.2054 35.702 35.6207 36.621 35.027C37.4573 34.4867 37.5485 34.1546 37.5563 34.1275V18.7877ZM41.5563 13.8546V34.1455C41.5563 36.1078 40.158 37.5042 38.7915 38.3869C37.3498 39.3182 35.4192 40.0389 33.2571 40.5551C30.5836 41.1934 27.3973 41.5564 24 41.5564C20.6027 41.5564 17.4164 41.1934 14.7429 40.5551C12.5808 40.0389 10.6502 39.3182 9.20848 38.3869C7.84205 37.5042 6.44365 36.1078 6.44365 34.1455L6.44365 13.8546C6.44365 12.2684 7.37223 11.0454 8.39581 10.2036C9.43325 9.3505 10.8137 8.67141 12.343 8.13948C15.4203 7.06909 19.5418 6.44366 24 6.44366C28.4582 6.44366 32.5797 7.06909 35.657 8.13948C37.1863 8.67141 38.5667 9.3505 39.6042 10.2036C40.6278 11.0454 41.5563 12.2684 41.5563 13.8546Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Haunted Hill</h2>
+</div>
+<div class="hidden md:flex flex-1 justify-end">
+<div class="flex items-center gap-9">
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors cursor-pointer" href="#story">The Story</a>
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors cursor-pointer" href="#characters">Characters</a>
+<a class="text-white text-sm font-medium leading-normal hover:text-primary transition-colors cursor-pointer" href="#features">Features</a>
+<button id="soundToggle" class="ml-4 p-2 text-white hover:text-primary transition-colors" title="Toggle Sound">
+<span class="material-symbols-outlined">volume_off</span>
+</button>
+</div>
+</div>
+<button id="mobileMenuBtn" class="md:hidden p-2 text-white hover:text-primary transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="mobile-menu fixed top-0 right-0 bottom-0 w-64 bg-background-dark/95 backdrop-blur-md z-50 md:hidden border-l border-primary/20">
+<div class="flex flex-col h-full p-6">
+<button id="closeMobileMenu" class="self-end p-2 text-white hover:text-primary transition-colors mb-8">
+<span class="material-symbols-outlined">close</span>
+</button>
+<nav class="flex flex-col gap-6">
+<a class="text-white text-lg font-medium hover:text-primary transition-colors" href="#story">The Story</a>
+<a class="text-white text-lg font-medium hover:text-primary transition-colors" href="#characters">Characters</a>
+<a class="text-white text-lg font-medium hover:text-primary transition-colors" href="#features">Features</a>
+<button id="soundToggleMobile" class="flex items-center gap-2 text-white text-lg font-medium hover:text-primary transition-colors">
+<span class="material-symbols-outlined">volume_off</span>
+<span>Sound</span>
+</button>
+</nav>
+</div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobileMenuOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
+<main class="flex-grow pt-16">
+<!-- HeroSection -->
+<div id="hero" class="relative flex h-screen w-full items-center justify-center overflow-hidden">
+<div id="heroBackground" class="parallax absolute inset-0 bg-cover bg-center" data-alt="A spooky haunted house on a hill under a full moon with a graveyard in the foreground." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCKuijHD6GTHIX1OMisurygWJREhGtPHHFMa47zQHzKIWP1DDGalxon0YpwCiEM6ViKP4Gajp1VYPdKLI76C4IzGlOJxtCYn3Kf3EqVaAyWU_4evXbeJ76Ac57FKfQC_4ZytDsbMRJ-mlcSyjC3bWrNfWfjb-B8q6NDbBK1hffgk-OQ82XwN92Kk5dIIyQ9U8PudADhtvZHTjmEXXP6TQbrZc27Pr22o0HmxOPJEgREKwxzZaPfYX_FPIw8vvol-ic8KGmnubxOVys2");'></div>
+<div class="absolute inset-0 bg-black/60"></div>
+<div class="fog" style="animation-delay: 0s;"></div>
+<div class="fog" style="animation-delay: 3s; animation-duration: 15s;"></div>
+<div id="particleContainer" class="absolute inset-0 pointer-events-none"></div>
+<div class="relative z-10 flex flex-col items-center justify-center p-4 text-center">
+<div class="flex flex-col gap-6 animate-fade-in-up">
+<h1 class="font-creepster text-5xl font-black leading-tight tracking-wider text-white md:text-7xl lg:text-8xl hero-text-shadow animate-flicker">
+                            Welcome to the Haunted Hill
+                        </h1>
+<h2 class="text-lg font-normal leading-normal text-white/90 md:text-xl max-w-2xl">
+                            An interactive tale of shadow and fright. Dare to uncover the secrets that lurk in the darkness?
+                        </h2>
+</div>
+<button class="btn-spooky mt-10 flex min-w-[200px] cursor-pointer items-center justify-center rounded-lg h-14 px-8 bg-primary text-background-dark text-lg font-bold tracking-[0.015em] hover:bg-primary/90 transition-all hover:scale-105 animate-pulse-glow">
+<span class="relative z-10">Begin Your Adventure</span>
+</button>
+<div class="mt-10 animate-bounce">
+<span class="material-symbols-outlined text-white/50 text-4xl">keyboard_arrow_down</span>
+</div>
+</div>
+</div>
+<!-- Story Section -->
+<section id="story" class="py-20 bg-gradient-to-b from-background-dark to-black/50">
+<div class="mx-auto flex max-w-[1200px] flex-col px-4 sm:px-10">
+<div class="scroll-reveal text-center mb-12">
+<h2 class="text-white text-4xl sm:text-5xl font-bold leading-tight tracking-[-0.015em] mb-4 font-creepster">Discover the Lore</h2>
+<div class="w-24 h-1 bg-primary mx-auto"></div>
+</div>
+<div class="scroll-reveal grid md:grid-cols-2 gap-8 items-center">
+<div class="space-y-6">
+<p class="text-white/80 text-lg font-normal leading-relaxed">
+                            As you scroll, the parallax effect reveals more of the scene. Text blocks could appear overlaid on different parts of the illustration, providing brief snippets of lore or an introduction to the story.
+                        </p>
+<p class="text-white/80 text-lg font-normal leading-relaxed">
+                            The tale of Haunted Hill is not for the faint of heart. Centuries of secrets are buried here, waiting for someone brave enough to unearth them. Every shadow holds a story, every whisper carries a warning.
+                        </p>
+<div class="flex gap-4 pt-4">
+<button class="btn-spooky px-6 py-3 bg-primary text-background-dark font-bold rounded-lg hover:bg-primary/90 transition-all hover:scale-105">
+                                Read More
+                            </button>
+<button class="px-6 py-3 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary/10 transition-all">
+                                Watch Trailer
+                            </button>
+</div>
+</div>
+<div class="relative">
+<div class="aspect-video bg-black/50 rounded-xl border-2 border-primary/30 overflow-hidden animate-pulse-glow">
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-7xl animate-float">movie</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Characters Section -->
+<section id="characters" class="py-20 bg-black/30">
+<div class="mx-auto flex max-w-[1200px] flex-col px-4 sm:px-10">
+<div class="scroll-reveal text-center mb-12">
+<h2 class="text-white text-4xl sm:text-5xl font-bold leading-tight tracking-[-0.015em] mb-4 font-creepster">Meet the Spirits</h2>
+<div class="w-24 h-1 bg-primary mx-auto mb-4"></div>
+<p class="text-white/70 text-lg max-w-2xl mx-auto">Each spirit has their own dark tale to tell. Will you listen?</p>
+</div>
+<div class="scroll-reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Character 1 -->
+<div class="card-hover group relative bg-gradient-to-br from-primary/10 to-transparent border border-primary/30 rounded-xl p-6 overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<div class="mb-4">
+<span class="material-symbols-outlined text-primary text-6xl animate-float" style="animation-delay: 0s;">skull</span>
+</div>
+<h3 class="text-white text-2xl font-bold mb-2">The Keeper</h3>
+<p class="text-white/70 text-sm mb-4">Guardian of the hill for over 200 years. They say he never leaves his post, watching, waiting...</p>
+<button class="text-primary font-semibold hover:underline flex items-center gap-1 group-hover:gap-2 transition-all">
+                                Learn More
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Character 2 -->
+<div class="card-hover group relative bg-gradient-to-br from-primary/10 to-transparent border border-primary/30 rounded-xl p-6 overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<div class="mb-4">
+<span class="material-symbols-outlined text-primary text-6xl animate-float" style="animation-delay: 0.5s;">flutter_dash</span>
+</div>
+<h3 class="text-white text-2xl font-bold mb-2">The Whisperer</h3>
+<p class="text-white/70 text-sm mb-4">Soft voices echo through the corridors. Some say it's the wind. Others know better...</p>
+<button class="text-primary font-semibold hover:underline flex items-center gap-1 group-hover:gap-2 transition-all">
+                                Learn More
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Character 3 -->
+<div class="card-hover group relative bg-gradient-to-br from-primary/10 to-transparent border border-primary/30 rounded-xl p-6 overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative z-10">
+<div class="mb-4">
+<span class="material-symbols-outlined text-primary text-6xl animate-float" style="animation-delay: 1s;">child_care</span>
+</div>
+<h3 class="text-white text-2xl font-bold mb-2">The Lost Child</h3>
+<p class="text-white/70 text-sm mb-4">Forever searching for something that was taken. Her laughter still echoes on moonless nights...</p>
+<button class="text-primary font-semibold hover:underline flex items-center gap-1 group-hover:gap-2 transition-all">
+                                Learn More
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Section -->
+<section id="features" class="py-20 bg-gradient-to-b from-black/30 to-background-dark">
+<div class="mx-auto flex max-w-[1200px] flex-col px-4 sm:px-10">
+<div class="scroll-reveal flex flex-col gap-6 mb-12">
+<h3 class="text-white tracking-tight text-4xl sm:text-5xl font-bold leading-tight text-center font-creepster">
+                                Key Features of Your Adventure
+                            </h3>
+<div class="w-24 h-1 bg-primary mx-auto"></div>
+<p class="text-white/80 text-lg font-normal leading-normal max-w-3xl mx-auto text-center">
+                                Explore the haunted grounds and uncover the secrets that lie within. Each corner of the hill holds a new piece of the chilling tale.
+                            </p>
+</div>
+<div class="scroll-reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="card-hover flex flex-col gap-4 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 backdrop-blur-sm">
+<div class="text-primary animate-float" style="animation-delay: 0s;">
+<span class="material-symbols-outlined" style="font-size: 48px;">auto_stories</span>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="text-white text-xl font-bold leading-tight">Interactive Story</h4>
+<p class="text-white/70 text-base font-normal leading-normal">Your choices shape the narrative. Navigate the haunted hill and decide your fate in this immersive adventure.</p>
+</div>
+</div>
+<div class="card-hover flex flex-col gap-4 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 backdrop-blur-sm">
+<div class="text-primary animate-float" style="animation-delay: 0.3s;">
+<span class="material-symbols-outlined" style="font-size: 48px;">mist</span>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="text-white text-xl font-bold leading-tight">Eerie Characters</h4>
+<p class="text-white/70 text-base font-normal leading-normal">Meet the ghostly residents of the hill, each with their own dark and twisted backstory to uncover.</p>
+</div>
+</div>
+<div class="card-hover flex flex-col gap-4 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 backdrop-blur-sm">
+<div class="text-primary animate-float" style="animation-delay: 0.6s;">
+<span class="material-symbols-outlined" style="font-size: 48px;">nights_stay</span>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="text-white text-xl font-bold leading-tight">Spooky Atmosphere</h4>
+<p class="text-white/70 text-base font-normal leading-normal">Immerse yourself in a world of shadow and fright with our atmospheric design and haunting sound.</p>
+</div>
+</div>
+<div class="card-hover flex flex-col gap-4 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 backdrop-blur-sm">
+<div class="text-primary animate-float" style="animation-delay: 0.9s;">
+<span class="material-symbols-outlined" style="font-size: 48px;">psychology</span>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="text-white text-xl font-bold leading-tight">Mystery Puzzles</h4>
+<p class="text-white/70 text-base font-normal leading-normal">Solve intricate puzzles and riddles to unlock the secrets hidden throughout the haunted grounds.</p>
+</div>
+</div>
+<div class="card-hover flex flex-col gap-4 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 backdrop-blur-sm">
+<div class="text-primary animate-float" style="animation-delay: 1.2s;">
+<span class="material-symbols-outlined" style="font-size: 48px;">visibility_off</span>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="text-white text-xl font-bold leading-tight">Hidden Secrets</h4>
+<p class="text-white/70 text-base font-normal leading-normal">Discover hidden passages, secret rooms, and forgotten artifacts that reveal the truth.</p>
+</div>
+</div>
+<div class="card-hover flex flex-col gap-4 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6 backdrop-blur-sm">
+<div class="text-primary animate-float" style="animation-delay: 1.5s;">
+<span class="material-symbols-outlined" style="font-size: 48px;">auto_awesome</span>
+</div>
+<div class="flex flex-col gap-2">
+<h4 class="text-white text-xl font-bold leading-tight">Multiple Endings</h4>
+<p class="text-white/70 text-base font-normal leading-normal">Your decisions matter. Experience different outcomes based on the paths you choose.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-black/70 border-t border-primary/20 backdrop-blur-sm">
+<div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<div class="col-span-1 md:col-span-2">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-8 text-primary animate-flicker">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z"></path></svg>
+</div>
+<p class="text-lg font-bold text-white font-creepster">Haunted Hill</p>
+</div>
+<p class="text-white/70 text-sm max-w-xs">An immersive Halloween experience where your choices determine your fate. Enter if you dare...</p>
+<div class="flex gap-4 mt-4">
+<a href="#" class="text-primary hover:text-primary/80 transition-colors">
+<span class="material-symbols-outlined">mail</span>
+</a>
+<a href="#" class="text-primary hover:text-primary/80 transition-colors">
+<span class="material-symbols-outlined">forum</span>
+</a>
+<a href="#" class="text-primary hover:text-primary/80 transition-colors">
+<span class="material-symbols-outlined">share</span>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Quick Links</h4>
+<nav class="flex flex-col gap-2">
+<a href="#story" class="text-white/70 hover:text-primary text-sm transition-colors">The Story</a>
+<a href="#characters" class="text-white/70 hover:text-primary text-sm transition-colors">Characters</a>
+<a href="#features" class="text-white/70 hover:text-primary text-sm transition-colors">Features</a>
+<a href="#" class="text-white/70 hover:text-primary text-sm transition-colors">FAQ</a>
+</nav>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Support</h4>
+<nav class="flex flex-col gap-2">
+<a href="#" class="text-white/70 hover:text-primary text-sm transition-colors">Help Center</a>
+<a href="#" class="text-white/70 hover:text-primary text-sm transition-colors">Contact Us</a>
+<a href="#" class="text-white/70 hover:text-primary text-sm transition-colors">Privacy Policy</a>
+<a href="#" class="text-white/70 hover:text-primary text-sm transition-colors">Terms of Service</a>
+</nav>
+</div>
+</div>
+<div class="border-t border-primary/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<p class="text-sm text-white/60">© 2024 Haunted Hill. All rights reserved.</p>
+<p class="text-xs text-white/40">Built with <span class="text-primary">♥</span> for Halloween</p>
+</div>
+</div>
+</footer>
+</div>
+
+<script>
+// Mobile Menu Toggle
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const closeMobileMenu = document.getElementById('closeMobileMenu');
+const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+
+function openMobileMenu() {
+  mobileMenu.classList.add('open');
+  mobileMenuOverlay.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileMenuFunc() {
+  mobileMenu.classList.remove('open');
+  mobileMenuOverlay.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+mobileMenuBtn.addEventListener('click', openMobileMenu);
+closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+mobileMenuOverlay.addEventListener('click', closeMobileMenuFunc);
+
+// Close mobile menu when clicking on a link
+const mobileLinks = mobileMenu.querySelectorAll('a');
+mobileLinks.forEach(link => {
+  link.addEventListener('click', closeMobileMenuFunc);
+});
+
+// Sound Toggle
+let soundEnabled = false;
+const soundToggle = document.getElementById('soundToggle');
+const soundToggleMobile = document.getElementById('soundToggleMobile');
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const icon = soundEnabled ? 'volume_up' : 'volume_off';
+  soundToggle.querySelector('span').textContent = icon;
+  soundToggleMobile.querySelector('span').textContent = icon;
+}
+
+soundToggle.addEventListener('click', toggleSound);
+soundToggleMobile.addEventListener('click', () => {
+  toggleSound();
+});
+
+// Parallax Effect
+const heroBackground = document.getElementById('heroBackground');
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const parallaxSpeed = 0.5;
+  
+  if (heroBackground) {
+    heroBackground.style.transform = `translateY(${scrolled * parallaxSpeed}px)`;
+  }
+});
+
+// Scroll Reveal Animation
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('revealed');
+    }
+  });
+}, observerOptions);
+
+const scrollRevealElements = document.querySelectorAll('.scroll-reveal');
+scrollRevealElements.forEach(el => observer.observe(el));
+
+// Particle System
+const particleContainer = document.getElementById('particleContainer');
+const particleCount = 30;
+
+function createParticle() {
+  const particle = document.createElement('div');
+  particle.classList.add('particle');
+  
+  const size = Math.random() * 4 + 2;
+  const startX = Math.random() * window.innerWidth;
+  const startY = Math.random() * window.innerHeight;
+  const duration = Math.random() * 10 + 10;
+  const delay = Math.random() * 5;
+  
+  particle.style.width = `${size}px`;
+  particle.style.height = `${size}px`;
+  particle.style.left = `${startX}px`;
+  particle.style.top = `${startY}px`;
+  particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+  
+  particleContainer.appendChild(particle);
+}
+
+for (let i = 0; i < particleCount; i++) {
+  createParticle();
+}
+
+// Smooth Scroll for Anchor Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href !== '#' && href !== '') {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        const offsetTop = target.offsetTop - 80;
+        window.scrollTo({
+          top: offsetTop,
+          behavior: 'smooth'
+        });
+      }
+    }
+  });
+});
+
+// Cursor Trail Effect (optional spooky effect)
+let cursorTrail = [];
+const maxTrail = 10;
+
+document.addEventListener('mousemove', (e) => {
+  if (Math.random() > 0.9) {
+    const trail = document.createElement('div');
+    trail.style.position = 'fixed';
+    trail.style.left = e.clientX + 'px';
+    trail.style.top = e.clientY + 'px';
+    trail.style.width = '4px';
+    trail.style.height = '4px';
+    trail.style.backgroundColor = 'rgba(244, 140, 37, 0.5)';
+    trail.style.borderRadius = '50%';
+    trail.style.pointerEvents = 'none';
+    trail.style.zIndex = '9999';
+    trail.style.transition = 'all 0.5s ease-out';
+    
+    document.body.appendChild(trail);
+    
+    setTimeout(() => {
+      trail.style.opacity = '0';
+      trail.style.transform = 'scale(0)';
+    }, 10);
+    
+    setTimeout(() => {
+      trail.remove();
+    }, 500);
+  }
+});
+
+// Random Flicker Effect for Titles
+setInterval(() => {
+  const flickerElements = document.querySelectorAll('.animate-flicker');
+  flickerElements.forEach(el => {
+    if (Math.random() > 0.7) {
+      el.style.opacity = '0.7';
+      setTimeout(() => {
+        el.style.opacity = '1';
+      }, 50);
+    }
+  });
+}, 3000);
+
+// Log a spooky message in console
+console.log('%c👻 Welcome to Haunted Hill... %c', 'font-size: 20px; color: #f48c25; font-weight: bold;', '');
+console.log('%cBeware: The spirits are watching...', 'font-size: 14px; color: #888;');
+</script>
+</body>
+</html>
